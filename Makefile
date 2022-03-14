@@ -1,7 +1,7 @@
 C_SRC = $(wildcard src/*.c)
 C_OBJ = $(C_SRC:.c=.o)
 ASM = $(wildcard src/arch/$(shell uname -m)/*.S)
-LDFLAGS = -luring
+LDFLAGS = -luring -lpthread
 CFLAGS = -g
 
 rocket_io: $(C_OBJ) $(ASM)

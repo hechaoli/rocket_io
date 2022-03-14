@@ -1,7 +1,6 @@
 .global switch_run_context
 .global init_run_context
 .global execute_start
-.global get_current_fiber
 
 # Initialize stack for an execution context.
 #
@@ -36,9 +35,10 @@ init_run_context:
 
 # Switch from one execution context to another.
 #
-# rdi: src_stk_ptr [in, out] Current (source) stack pointer.
-# rsi: dst_stk_ptr [in] Pointer to the stack to switch to.
-# rdx: dst_fiber   [in] Pointer to the fiber to switch to.
+# rdi: src_stk_ptr     [in, out] Current (source) stack pointer.
+# rsi: dst_stk_ptr     [in] Pointer to the stack to switch to.
+# rdx: switch_context  [in] The context passed to switch_callback.
+# rcx: switch_callback [in] Callback invoked after switching.
 #
 switch_run_context:
   # Push all callee-saved registers to the current stack.
@@ -56,7 +56,9 @@ switch_run_context:
   # Update the stack pointer to dst_stk_ptr
   movq %rsi, %rsp
 
-  movq %rdx, %fs:0 # Set current fiber
+  # Call switch_callback(switch_context)
+  movq %rdx, %rdi
+  callq *%rcx
 
   popq %rdi # HACK: for the entry_point_context
   # Pop all callee-saved registers from the new stack.
@@ -68,9 +70,4 @@ switch_run_context:
   popq %rbp
 
   # This will return to the dst fiber
-  retq
-
-# Get the pointer to current fiber
-get_current_fiber:
-  movq %fs:0, %rax
   retq

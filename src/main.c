@@ -1,3 +1,4 @@
+#include <pthread.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -12,6 +13,7 @@
 #define MAX_NUM 10
 
 int num = 0;
+static const size_t queue_depth = 10;
 
 static void func_odd(void* context) {
   while (num < MAX_NUM) {
@@ -113,21 +115,56 @@ static void open_write_read_close(void* context) {
   unlink(filename);
 }
 
-int main(int argc, const char** argv) {
-  static const size_t queue_depth = 10;
+static void* thread_func1(void* context) {
+  fprintf(stdout, "START thread 1\n");
   rocket_engine_t* engine = rocket_engine_create(queue_depth);
   rocket_executor_t* executor = rocket_executor_create(engine);
 
   rocket_executor_submit_task(executor, open_write_read_close, "pikachu");
-  rocket_executor_submit_task(executor, openfiles, "foo");
-  rocket_executor_submit_task(executor, openfiles, "bar");
   rocket_executor_submit_task(executor, func_odd, NULL);
   rocket_executor_submit_task(executor, func_even, NULL);
+  rocket_executor_execute(executor);
+
+  rocket_executor_destroy(executor);
+  rocket_engine_destroy(engine);
+  fprintf(stdout, "END thread 1\n");
+  return NULL;
+}
+
+static void* thread_func2(void* context) {
+  fprintf(stdout, "START thread 2\n");
+  rocket_engine_t* engine = rocket_engine_create(queue_depth);
+  rocket_executor_t* executor = rocket_executor_create(engine);
+
+  rocket_executor_submit_task(executor, openfiles, "foo");
+  rocket_executor_submit_task(executor, openfiles, "bar");
   rocket_executor_submit_task(executor, big_stack, NULL);
   rocket_executor_execute(executor);
 
   rocket_executor_destroy(executor);
   rocket_engine_destroy(engine);
+  fprintf(stdout, "END thread 2\n");
+  return NULL;
+}
+
+int main(int argc, const char** argv) {
+  pthread_t thread1, thread2;
+  int ret1 =
+      pthread_create(&thread1, /*attr=*/NULL, thread_func1, /*context=*/NULL);
+  if (ret1 != 0) {
+    fprintf(stderr, "Failed to create thread1: %s", strerror(ret1));
+    return -1;
+  }
+
+  int ret2 =
+      pthread_create(&thread2, /*attr=*/NULL, thread_func2, /*context=*/NULL);
+  if (ret2 != 0) {
+    fprintf(stderr, "Failed to create thread2: %s", strerror(ret2));
+    return -1;
+  }
+
+  pthread_join(thread1, NULL);
+  pthread_join(thread2, NULL);
 
   fprintf(stdout, "completed\n");
 

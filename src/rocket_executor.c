@@ -6,6 +6,8 @@
 #include "rocket_future.h"
 #include "switch.h"
 
+static __thread rocket_fiber_t* current_fiber;
+
 typedef struct {
   rocket_fiber_t* fiber;
   void* task_func_context;
@@ -37,23 +39,28 @@ rocket_executor_t* rocket_executor_create(rocket_engine_t* engine) {
   return executor;
 }
 
+rocket_fiber_t* get_current_fiber() {
+  return current_fiber;
+}
+
+static void set_current_fiber(void* fiber) {
+  current_fiber = fiber;
+}
+
 // from_fiber should be current fiber. Needed before we have get_current_fiber()
 void rocket_fiber_yield() {
   rocket_fiber_t* from_fiber = get_current_fiber();
-  switch_run_context(
-      &from_fiber->stk_ptr,
-      from_fiber->executor->execute_loop_stk_ptr,
-      /*dst_fiber=*/NULL);
+  switch_run_context(&from_fiber->stk_ptr,
+                     from_fiber->executor->execute_loop_stk_ptr,
+                     /*switch_context=*/NULL, set_current_fiber);
 }
 
 static void rocket_task_func_wrapper(void* context) {
   rocket_fiber_t* fiber = (rocket_fiber_t*)context;
   fiber->task_func(fiber->context);
   fiber->state = COMPLETED;
-  switch_run_context(
-      &fiber->stk_ptr,
-      fiber->executor->execute_loop_stk_ptr,
-      /*dst_fiber=*/NULL);
+  switch_run_context(&fiber->stk_ptr, fiber->executor->execute_loop_stk_ptr,
+                     /*switch_context=*/NULL, set_current_fiber);
 }
 
 // 1) Create a fiber using the task.
@@ -77,8 +84,8 @@ void rocket_executor_execute(rocket_executor_t* executor) {
     if (!dlist_is_empty(&executor->runnable)) {
       dlist_node_t* node = dlist_pop_head(&executor->runnable);
       rocket_fiber_t* fiber = container_of(node, rocket_fiber_t, list_node);
-      switch_run_context(
-          &executor->execute_loop_stk_ptr, fiber->stk_ptr, fiber);
+      switch_run_context(&executor->execute_loop_stk_ptr, fiber->stk_ptr, fiber,
+                         set_current_fiber);
       switch (fiber->state) {
         case COMPLETED:
           rocket_fiber_destroy(fiber);

@@ -15,3 +15,6 @@ rocket_fiber_t* rocket_executor_submit_task(
 void rocket_executor_execute(rocket_executor_t* executor);
 void rocket_executor_destroy(rocket_executor_t* executor);
 rocket_engine_t* rocket_executor_get_engine(rocket_executor_t* executor);
+
+rocket_fiber_t* get_current_fiber();
+
