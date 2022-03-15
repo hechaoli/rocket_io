@@ -1,11 +1,11 @@
 .global switch_run_context
 .global init_run_context
-.global execute_start
 
 # Initialize stack for an execution context.
 #
 # rdi: stk_ptr [in, out] Pointer to an uninitialized stack for the new context.
 # rsi: entry_point [in] Function pointer where execution begins.
+# rdx: entry_point_context [in] Argument passed to entry point.
 #
 init_run_context:
   pushq %rbp

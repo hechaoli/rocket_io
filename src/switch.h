@@ -9,5 +9,3 @@ void init_run_context(
 // Then current stack pointer will be updated to dst_stk_ptr.
 void switch_run_context(void **src_stk_ptr, void *dst_stk_ptr,
                         void *switch_context, void (*switch_callback)(void *));
-
-void execute_start(void* stk_ptr);
