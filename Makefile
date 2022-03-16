@@ -31,4 +31,4 @@ benchmark_file_io: $(BENCHMARK_OBJ) $(ASM) $(LIBS)
 
 .PHONY: clean
 clean:
-	rm -f $(LIB_ROCKET_IO_OBJ) $(MAIN_OBJ) $(BINS) $(LIBS)
+	rm -f $(LIB_ROCKET_IO_OBJ) $(MAIN_OBJ) $(BENCHMARK_OBJ) $(BINS) $(LIBS)
