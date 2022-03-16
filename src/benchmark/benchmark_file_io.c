@@ -60,7 +60,16 @@ static void *file_io_func(void *context_in) {
 
   ssize_t ret = 0;
   uint8_t *write_buf = malloc(context->io_bytes);
+  if (write_buf == NULL) {
+    fprintf(stderr, "Failed to allocate write buffer\n");
+    return (void *)-1;
+  }
   uint8_t *read_buf = malloc(context->io_bytes);
+  if (read_buf == NULL) {
+    free(write_buf);
+    fprintf(stderr, "Failed to allocate read buffer\n");
+    return (void *)-1;
+  }
 
   for (int i = 0; i < context->cycles; i++) {
     // Open
@@ -134,8 +143,17 @@ static int read_write_with_pthreads(const void *params_in) {
   int ret = 0;
   const params_t *params = params_in;
   pthread_t *threads = malloc(sizeof(pthread_t) * params->num_threads);
+  if (threads == NULL) {
+    fprintf(stderr, "Failed to allocate threads\n");
+    return -1;
+  }
   file_io_context_t *contexts =
       malloc(sizeof(file_io_context_t) * params->num_threads);
+  if (contexts == NULL) {
+    free(threads);
+    fprintf(stderr, "Failed to allocate io contexts\n");
+    return -1;
+  }
   for (int i = 0; i < params->num_threads; i++) {
     contexts[i].filename_prefix = __FUNCTION__;
     contexts[i].thread_num = i;
@@ -176,6 +194,11 @@ static int read_write_with_fibers(const void *params_in) {
 
   file_io_context_t *contexts =
       malloc(sizeof(file_io_context_t) * params->num_threads);
+  if (contexts == NULL) {
+    rocket_engine_destroy(engine);
+    fprintf(stderr, "Failed to allocate io contexts\n");
+    return -1;
+  }
   for (int i = 0; i < params->num_threads; i++) {
     contexts[i].filename_prefix = __FUNCTION__;
     contexts[i].thread_num = i;
