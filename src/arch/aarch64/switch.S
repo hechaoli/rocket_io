@@ -5,7 +5,7 @@
  * Initialize stack for an execution context.
  *
  * x0: stk_ptr [in, out] Pointer to an uninitialized stack for the new
-   execution context.
+ * execution context.
  * x1: entry_point [in] Function pointer where execution begins.
  * x2: entry_point_context [in] Argument passed to entry point.
  */
@@ -88,7 +88,7 @@ switch_run_context:
   mov sp, x1
 
   // Call the switch callback, passing the context as the first argument.
-  mov x0, x2 // x0 = callback_context
+  mov x0, x2 // x0 = switch_context
   blr x3
 
   // Pop the previous context value into the first argument register.
