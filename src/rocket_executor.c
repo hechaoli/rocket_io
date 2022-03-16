@@ -57,6 +57,7 @@ void rocket_fiber_yield() {
 
 static void rocket_task_func_wrapper(void* context) {
   rocket_fiber_t* fiber = (rocket_fiber_t*)context;
+  // TODO: Have a way retrieve the return value.
   fiber->task_func(fiber->context);
   fiber->state = COMPLETED;
   switch_run_context(&fiber->stk_ptr, fiber->executor->execute_loop_stk_ptr,
@@ -119,13 +120,6 @@ void rocket_executor_execute(rocket_executor_t* executor) {
 }
 
 // TODO: Add timeout
-//
-// 1) Add current fiber to blocked.
-// 2) Find the next runnable fiber.
-// 3) If found, switch to that fiber.
-// 4) Otherwise, wait for a completion
-// 5) Get the future from completion context.
-// 6) Switch to that fiber.
 int rocket_future_await(rocket_fiber_t* fiber, rocket_future_t* future) {
   assert(!dlist_node_in_list(&fiber->list_node));
   if (future->completed) {
