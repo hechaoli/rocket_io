@@ -109,7 +109,7 @@ static void prepare_openat(struct io_uring_sqe* sqe, void* context) {
       openat_context->pmode);
 }
 
-int openat_await(int dirfd, const char* pathname, int oflag, int pmode) {
+int openat_await(int dirfd, const char* pathname, int oflag, mode_t pmode) {
   openat_context_t context;
   context.dirfd = dirfd;
   context.pathname = pathname;
@@ -135,7 +135,7 @@ static void prepare_readat(struct io_uring_sqe* sqe, void* context) {
       readat_context->offset);
 }
 
-int readat_await(int fd, void* buf, size_t nbytes, off_t offset) {
+ssize_t readat_await(int fd, void* buf, size_t nbytes, off_t offset) {
   readat_context_t context;
   context.fd = fd;
   context.buf = buf;
@@ -161,7 +161,7 @@ static void prepare_writeat(struct io_uring_sqe* sqe, void* context) {
       writeat_context->offset);
 }
 
-int writeat_await(int fd, const void* buf, size_t nbytes, off_t offset) {
+ssize_t writeat_await(int fd, const void* buf, size_t nbytes, off_t offset) {
   writeat_context_t context;
   context.fd = fd;
   context.buf = buf;

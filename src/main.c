@@ -15,7 +15,7 @@
 int num = 0;
 static const size_t queue_depth = 10;
 
-static void func_odd(void* context) {
+static void* func_odd(void* context) {
   while (num < MAX_NUM) {
     if (num % 2 == 0) {
       rocket_fiber_yield();
@@ -24,9 +24,10 @@ static void func_odd(void* context) {
       num++;
     }
   }
+  return NULL;
 }
 
-static void func_even(void* context) {
+static void* func_even(void* context) {
   while (num < MAX_NUM) {
     if (num % 2 == 1) {
       rocket_fiber_yield();
@@ -35,6 +36,7 @@ static void func_even(void* context) {
       num++;
     }
   }
+  return NULL;
 }
 
 static void big_stack_helper(int count) {
@@ -44,12 +46,13 @@ static void big_stack_helper(int count) {
   }
 }
 
-static void big_stack(void* context) {
+static void* big_stack(void* context) {
   const size_t depth = 65536 / getpagesize() - 1;
   big_stack_helper(depth);
+  return NULL;
 }
 
-static void openfiles(void* context) {
+static void* openfiles(void* context) {
   const char* name = context;
   fprintf(stdout, "hello from %s\n", name);
   for (int i = 0; i < 32; i++) {
@@ -60,9 +63,10 @@ static void openfiles(void* context) {
     int ret = close_await(fd);
     unlink(filename);
   }
+  return NULL;
 }
 
-static void open_write_read_close(void* context) {
+static void* open_write_read_close(void* context) {
   const char* filename = context;
   fprintf(stdout, "========== BEGIN open_write_read_close ==========\n");
   int fd = openat_await(AT_FDCWD, filename, O_CREAT | O_RDWR, 0644);
@@ -113,6 +117,7 @@ static void open_write_read_close(void* context) {
   }
   fprintf(stdout, "========== END open_write_read_close ==========\n");
   unlink(filename);
+  return NULL;
 }
 
 static void* thread_func1(void* context) {
