@@ -178,3 +178,70 @@ static void prepare_close(struct io_uring_sqe* sqe, void* context) {
 int close_await(int fd) {
   return io_uring_submit_await(prepare_close, &fd);
 }
+
+typedef struct {
+  int sockfd;
+  struct sockaddr *addr;
+  socklen_t *addrlen;
+  int flags;
+} accept_context_t;
+
+static void prepare_accept(struct io_uring_sqe* sqe, void* context) {
+  accept_context_t* accept_context = context;
+  io_uring_prep_accept(sqe, accept_context->sockfd, accept_context->addr,
+                       accept_context->addrlen, accept_context->flags);
+}
+
+int accept_await(int sockfd, struct sockaddr *addr, socklen_t *addrlen,
+                 int flags) {
+  accept_context_t context;
+  context.sockfd = sockfd;
+  context.addr = addr;
+  context.addrlen = addrlen;
+  context.flags = flags;
+  return io_uring_submit_await(prepare_accept, &context);
+}
+
+typedef struct {
+  int sockfd;
+  const void* buf;
+  size_t len;
+  int flags;
+} send_context_t;
+
+static void prepare_send(struct io_uring_sqe* sqe, void* context) {
+  send_context_t* send_context = context;
+  io_uring_prep_send(sqe, send_context->sockfd, send_context->buf,
+                     send_context->len, send_context->flags);
+}
+
+ssize_t send_await(int sockfd, const void *buf, size_t len, int flags) {
+  send_context_t context;
+  context.sockfd = sockfd;
+  context.buf = buf;
+  context.len = len;
+  context.flags = flags;
+  return io_uring_submit_await(prepare_send, &context);
+}
+
+typedef struct {
+  int sockfd;
+  void* buf;
+  size_t len;
+  int flags;
+} recv_context_t;
+
+static void prepare_recv(struct io_uring_sqe* sqe, void* context) {
+  recv_context_t* recv_context = context;
+  io_uring_prep_recv(sqe, recv_context->sockfd, recv_context->buf,
+                     recv_context->len, recv_context->flags);
+}
+
+ssize_t recv_await(int sockfd, void *buf, size_t len, int flags) {
+  recv_context_t context;
+  context.sockfd = sockfd;
+  context.buf = buf;
+  context.len = len;
+  context.flags = flags;
+  return io_uring_submit_await(prepare_recv, &context);
+}
