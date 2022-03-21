@@ -1,8 +1,6 @@
-
 #pragma once
 
-#include "dlist.h"
-
+typedef struct rocket_engine rocket_engine_t;
 typedef struct rocket_executor rocket_executor_t;
 typedef struct rocket_fiber rocket_fiber_t;
 typedef struct rocket_future rocket_future_t;

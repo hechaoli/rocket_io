@@ -7,7 +7,8 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "../rocket_executor.h"
+#include <rocket_executor.h>
+#include <rocket_engine.h>
 #include "benchmark_common.h"
 
 typedef struct {

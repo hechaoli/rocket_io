@@ -1,9 +1,9 @@
-
 #pragma once
 
-#include "dlist.h"
-#include "pal.h"
-#include "rocket_common.h"
+#include <internal/dlist.h>
+#include <internal/pal.h>
+#include <rocket_fiber.h>
+#include <rocket_types.h>
 
 typedef enum {
   NONE = 0,
@@ -32,11 +32,6 @@ rocket_fiber_t* rocket_fiber_create(
     rocket_executor_t* executor,
     rocket_task_func_t func,
     void* context);
-void rocket_fiber_init(void* ret_addr);
-
-// from_fiber should be current fiber. Needed before we have get_current_fiber()
-void rocket_fiber_yield();
-// from_fiber should be current fiber. Needed before we have get_current_fiber()
-void rocket_fiber_switch(rocket_fiber_t* from_fiber, rocket_fiber_t* to_fiber);
-void rocket_fiber_exit(rocket_fiber_t* fiber);
+rocket_fiber_t* get_current_fiber();
+void set_current_fiber(void* fiber);
 void rocket_fiber_destroy(rocket_fiber_t* fiber);
