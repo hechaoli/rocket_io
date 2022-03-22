@@ -69,7 +69,7 @@ void rocket_executor_execute(rocket_executor_t* executor) {
           // blocked.
           break;
         default:
-          fprintf(stderr, "[BUG] fiber state can't be NONE");
+          fprintf(stderr, "[BUG] fiber state can't be NONE\n");
           break;
       }
 
@@ -81,8 +81,8 @@ void rocket_executor_execute(rocket_executor_t* executor) {
 
       // Remove the future from the blocked list and mark the fiber runnable.
       dlist_remove_node(&future->list_node);
+      future->fiber->state = RUNNABLE;
       dlist_push_tail(&executor->runnable, &future->fiber->list_node);
-
     } else {
       return;
     }
