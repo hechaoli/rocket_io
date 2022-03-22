@@ -6,16 +6,18 @@ ASM = $(wildcard src/arch/$(shell uname -m)/*.S)
 LIBS = librocket_io.a
 BINS = rocket_io benchmark_file_io
 LDFLAGS = -luring -lpthread -lrocket_io
+INTERNAL_INCLUDES = -Iinclude_internal
+PUBLIC_INCLUDES = -Iinclude
 CFLAGS = -g
 
 rocket_io: $(MAIN_OBJ) $(ASM) $(LIBS)
 	clang $(CFLAGS) -o $@ $^ -L. $(LDFLAGS)
 
 $(MAIN_OBJ): src/%.o : src/%.c
-	clang $(CFLAGS) -c -o $@ $<
+	clang $(CFLAGS) $(PUBLIC_INCLUDES) -c -o $@ $<
 
 $(LIB_ROCKET_IO_OBJ): src/%.o : src/%.c
-	clang $(CFLAGS) -c -o $@ $<
+	clang $(CFLAGS) $(INTERNAL_INCLUDES) $(PUBLIC_INCLUDES) -c -o $@ $<
 
 librocket_io.a: $(LIB_ROCKET_IO_OBJ) $(ASM)
 	ar -rcs librocket_io.a $^
@@ -24,7 +26,7 @@ BENCHMARK_SRC = $(wildcard src/benchmark/*.c)
 BENCHMARK_OBJ = $(BENCHMARK_SRC:.c=.o)
 
 $(BENCHMARK_OBJ): src/benchmark/%.o : src/benchmark/%.c
-	clang $(CFLAGS) -c -o $@ $<
+	clang $(CFLAGS) $(PUBLIC_INCLUDES) -c -o $@ $<
 
 benchmark_file_io: $(BENCHMARK_OBJ) $(ASM) $(LIBS)
 	clang $(CFLAGS) -o $@ $^ -L. $(LDFLAGS)

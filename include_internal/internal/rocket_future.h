@@ -1,8 +1,9 @@
-
 #pragma once
 
-#include "dlist.h"
-#include "rocket_common.h"
+#include <internal/dlist.h>
+#include <internal/rocket_fiber.h>
+
+typedef struct rocket_future rocket_future_t;
 
 struct rocket_future {
   dlist_node_t list_node;
@@ -19,4 +20,4 @@ struct rocket_future {
 };
 
 // TODO: Add timeout
-int rocket_future_await(rocket_fiber_t* fiber, rocket_future_t* future);
+int rocket_future_await(rocket_future_t* future);

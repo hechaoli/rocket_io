@@ -5,7 +5,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
-#include "pal.h"
+#include <internal/pal.h>
 
 #define STACK_ALIGN __alignof__(long double)
 #define ROUND_UP(a, b) ((a) % (b) ? ((a) + (b)) - ((a) % (b)) : (a))

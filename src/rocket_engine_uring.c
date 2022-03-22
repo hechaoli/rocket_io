@@ -2,10 +2,10 @@
 #include <stdio.h>
 
 #include "rocket_engine.h"
-#include "rocket_executor.h"
 #include "rocket_fiber.h"
-#include "rocket_future.h"
-#include "switch.h"
+#include <internal/rocket_executor.h>
+#include <internal/rocket_future.h>
+#include <internal/switch.h>
 
 typedef struct {
   int dirfd;
@@ -90,7 +90,7 @@ static int io_uring_submit_await(
   }
 
   // Wait for completion.
-  if (rocket_future_await(fiber, &future) < 0) {
+  if (rocket_future_await(&future) < 0) {
     perror("rocket_future_await");
     return -1;
   }

@@ -1,9 +1,11 @@
-
 #include <stdint.h>
 
-#include "dlist.h"
-#include "pal.h"
-#include "rocket_fiber.h"
+#include <internal/dlist.h>
+#include <internal/rocket_executor.h>
+#include <internal/rocket_fiber.h>
+#include <internal/switch.h>
+
+static __thread rocket_fiber_t *current_fiber;
 
 rocket_fiber_t* rocket_fiber_create(
     rocket_executor_t* executor,
@@ -23,10 +25,20 @@ rocket_fiber_t* rocket_fiber_create(
   return fiber;
 }
 
-// from_fiber should be current fiber. Needed before we have get_current_fiber()
-void rocket_fiber_switch(rocket_fiber_t* from_fiber, rocket_fiber_t* to_fiber) {
+rocket_fiber_t* get_current_fiber() {
+  return current_fiber;
 }
-void rocket_fiber_exit(rocket_fiber_t* fiber) {}
+
+void set_current_fiber(void* fiber) {
+  current_fiber = fiber;
+}
+
+void rocket_fiber_yield() {
+  rocket_fiber_t* from_fiber = get_current_fiber();
+  switch_run_context(&from_fiber->stk_ptr,
+                     from_fiber->executor->execute_loop_stk_ptr,
+                     /*switch_context=*/NULL, set_current_fiber);
+}
 
 void rocket_fiber_destroy(rocket_fiber_t* fiber) {
   stack_destroy(&fiber->stack);

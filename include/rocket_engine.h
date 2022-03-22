@@ -1,13 +1,9 @@
 #pragma once
 
 #include <fcntl.h>
-
-#include "rocket_common.h"
-
-typedef struct rocket_engine rocket_engine_t;
+#include <rocket_types.h>
 
 rocket_engine_t* rocket_engine_create(size_t queue_depth);
-rocket_future_t* rocket_engine_await_next(rocket_engine_t* engine);
 void rocket_engine_destroy(rocket_engine_t* engine);
 
 int openat_await(int dirfd, const char* pathname, int oflag, mode_t pmode);

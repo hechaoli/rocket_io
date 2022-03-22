@@ -1,28 +1,15 @@
 #include <stdio.h>
 
-#include "dlist.h"
-#include "rocket_executor.h"
-#include "rocket_fiber.h"
-#include "rocket_future.h"
-#include "switch.h"
-
-static __thread rocket_fiber_t* current_fiber;
+#include <internal/rocket_engine.h>
+#include <internal/rocket_executor.h>
+#include <internal/rocket_fiber.h>
+#include <internal/rocket_future.h>
+#include <internal/switch.h>
 
 typedef struct {
   rocket_fiber_t* fiber;
   void* task_func_context;
 } wrapper_context_t;
-
-struct rocket_executor {
-  rocket_engine_t* engine;
-
-  // Runnable fibers.
-  dlist_node_t runnable;
-  // Blocked fibers.
-  dlist_node_t blocked;
-
-  void* execute_loop_stk_ptr;
-};
 
 rocket_executor_t* rocket_executor_create(rocket_engine_t* engine) {
   rocket_executor_t* executor = malloc(sizeof(rocket_executor_t));
@@ -39,22 +26,6 @@ rocket_executor_t* rocket_executor_create(rocket_engine_t* engine) {
   return executor;
 }
 
-rocket_fiber_t* get_current_fiber() {
-  return current_fiber;
-}
-
-static void set_current_fiber(void* fiber) {
-  current_fiber = fiber;
-}
-
-// from_fiber should be current fiber. Needed before we have get_current_fiber()
-void rocket_fiber_yield() {
-  rocket_fiber_t* from_fiber = get_current_fiber();
-  switch_run_context(&from_fiber->stk_ptr,
-                     from_fiber->executor->execute_loop_stk_ptr,
-                     /*switch_context=*/NULL, set_current_fiber);
-}
-
 static void rocket_task_func_wrapper(void* context) {
   rocket_fiber_t* fiber = (rocket_fiber_t*)context;
   // TODO: Have a way retrieve the return value.
@@ -66,7 +37,7 @@ static void rocket_task_func_wrapper(void* context) {
 
 // 1) Create a fiber using the task.
 // 2) Append the fiber to runnable list.
-rocket_fiber_t* rocket_executor_submit_task(
+void rocket_executor_submit_task(
     rocket_executor_t* executor,
     rocket_task_func_t func,
     void* context) {
@@ -75,7 +46,6 @@ rocket_fiber_t* rocket_executor_submit_task(
   init_run_context(
       &fiber->stk_ptr, rocket_task_func_wrapper, /*entry_point_context=*/fiber);
   dlist_push_tail(&executor->runnable, &fiber->list_node);
-  return fiber;
 }
 
 // Start executing the fibers in the executor.
@@ -117,23 +87,6 @@ void rocket_executor_execute(rocket_executor_t* executor) {
       return;
     }
   }
-}
-
-// TODO: Add timeout
-int rocket_future_await(rocket_fiber_t* fiber, rocket_future_t* future) {
-  assert(!dlist_node_in_list(&fiber->list_node));
-  if (future->completed) {
-    return future->error;
-  }
-
-  future->fiber = fiber;
-  fiber->state = BLOCKED;
-  rocket_executor_t* executor = fiber->executor;
-
-  dlist_push_tail(&executor->blocked, &future->list_node);
-  rocket_fiber_yield();
-
-  return future->error;
 }
 
 void rocket_executor_destroy(rocket_executor_t* executor) {

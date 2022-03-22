@@ -1,14 +1,12 @@
+#include <alloca.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
-#include "dlist.h"
-#include "rocket_engine.h"
-#include "rocket_executor.h"
-#include "rocket_fiber.h"
-#include "rocket_future.h"
-#include "switch.h"
+#include <rocket_engine.h>
+#include <rocket_executor.h>
+#include <rocket_fiber.h>
 
 #define MAX_NUM 10
 
