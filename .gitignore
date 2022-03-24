@@ -50,3 +50,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+Makefile
+echo_server
+rocket_io_demo
+benchmark_file_io
