@@ -31,8 +31,14 @@ static void rocket_task_func_wrapper(void* context) {
   // TODO: Have a way retrieve the return value.
   fiber->task_func(fiber->context);
   fiber->state = COMPLETED;
+}
+
+// Invoked on completion of the fiber task function.
+static void rocket_fiber_task_exit(void) {
+  rocket_fiber_t* fiber = get_current_fiber();
   switch_run_context(&fiber->stk_ptr, fiber->executor->execute_loop_stk_ptr,
                      /*switch_context=*/NULL, set_current_fiber);
+  assert(false); // Should never return
 }
 
 // 1) Create a fiber using the task.
@@ -44,7 +50,8 @@ void rocket_executor_submit_task(
   // Destroyed in rocket_executor_execute.
   rocket_fiber_t* fiber = rocket_fiber_create(executor, func, context);
   init_run_context(
-      &fiber->stk_ptr, rocket_task_func_wrapper, /*entry_point_context=*/fiber);
+      &fiber->stk_ptr, rocket_task_func_wrapper, /*entry_point_context=*/fiber,
+      rocket_fiber_task_exit);
   dlist_push_tail(&executor->runnable, &fiber->list_node);
 }
 

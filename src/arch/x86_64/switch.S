@@ -6,6 +6,7 @@
 # rdi: stk_ptr [in, out] Pointer to an uninitialized stack for the new context.
 # rsi: entry_point [in] Function pointer where execution begins.
 # rdx: entry_point_context [in] Argument passed to entry point.
+# rcx: exit_point [in] No-argument function pointer to execute on completion.  #
 #
 init_run_context:
   pushq %rbp
@@ -13,12 +14,21 @@ init_run_context:
 
   # Get the stack pointer
   movq (%rdi), %rsp # rdi = &stk_ptr
-  # Push the entry point address to the stack.
+
+  # Push the address of the exit function. When the fiber callback function
+  # returns, it will return directly to this function which can perform
+  # cleanup.
+  pushq %rcx # rcx = exit_point
+
+  # Push the entry point function to the stack. The entry point address will
+  # be "returned" to the first time switch_run_context is called on the new
+  # execution context.
   pushq %rsi # rsi = entry_point
 
-  # Push dummy values to the stack for all callee saved register positions.
-  # These will be popped in switch_run_context.
-  movq $0xDEADBEEFC0FFEE41, %r10
+  # Load a dummy value that will be pushed on the stack in place of valid
+  # register values.
+  movq $0xBADC0FFEEDEADDAD, %r10
+
   pushq %r10 # rbp
   pushq %r10 # rbx
   pushq %r10 # r12
