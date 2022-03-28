@@ -13,6 +13,10 @@ init_run_context:
 
   # Get the stack pointer
   movq (%rdi), %rsp # rdi = &stk_ptr
+
+  # Push 8 byte padding to the stack for proper 16-byte stack alignment
+  pushq $0
+
   # Push the entry point address to the stack.
   pushq %rsi # rsi = entry_point
 
