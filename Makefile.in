@@ -5,13 +5,13 @@ MAIN_OBJ = $(MAIN_SRC:.c=.o)
 ASM_SRC = $(wildcard src/arch/$(shell uname -m)/*.S)
 ASM_OBJ = $(ASM_SRC:.S=.o)
 LIBS = librocket_io.a
-BINS = rocket_io benchmark_file_io echo_server
+BINS = rocket_io_demo benchmark_file_io echo_server
 LDFLAGS = -luring -lpthread -lrocket_io
 INTERNAL_INCLUDES = -Iinclude_internal
 PUBLIC_INCLUDES = -Iinclude
-CFLAGS = -g
+CFLAGS = $(DBG)
 
-rocket_io: $(MAIN_OBJ) $(LIBS)
+rocket_io_demo: $(MAIN_OBJ) $(LIBS)
 	clang $(CFLAGS) -o $@ $^ -L. $(LDFLAGS)
 
 $(MAIN_OBJ): src/%.o : src/%.c
@@ -25,6 +25,16 @@ $(ASM_OBJ): src/%.o : src/%.S
 
 librocket_io.a: $(LIB_ROCKET_IO_OBJ) $(ASM_OBJ)
 	ar -rcs librocket_io.a $^
+
+install: librocket_io.a
+	install -d $(DESTDIR)$(PREFIX)/lib/
+	install -m 644 librocket_io.a $(DESTDIR)$(PREFIX)/lib/
+	install -d $(DESTDIR)$(PREFIX)/include/rocket
+	install -m 644 include/rocket/*.h $(DESTDIR)$(PREFIX)/include/rocket
+
+uninstall:
+	rm -rf $(DESTDIR)$(PREFIX)/include/rocket/
+	rm -f $(DESTDIR)$(PREFIX)/lib/librocket_io.a
 
 BENCHMARK_SRC = $(wildcard src/benchmark/benchmark*.c)
 BENCHMARK_OBJ = $(BENCHMARK_SRC:.c=.o)

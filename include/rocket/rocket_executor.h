@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rocket_types.h>
+#include <rocket/rocket_types.h>
 
 rocket_executor_t* rocket_executor_create(rocket_engine_t* engine);
 void rocket_executor_submit_task(rocket_executor_t *executor,

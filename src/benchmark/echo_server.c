@@ -10,8 +10,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <rocket_engine.h>
-#include <rocket_executor.h>
+#include <rocket/rocket_engine.h>
+#include <rocket/rocket_executor.h>
 
 #define DEFAULT_PORT 4224
 

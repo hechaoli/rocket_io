@@ -1,7 +1,7 @@
 #pragma once
 
 #include <internal/dlist.h>
-#include <rocket_executor.h>
+#include <rocket/rocket_executor.h>
 
 struct rocket_executor {
   rocket_engine_t* engine;

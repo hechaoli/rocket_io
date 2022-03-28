@@ -1,7 +1,7 @@
 #pragma once
 
 #include <fcntl.h>
-#include <rocket_types.h>
+#include <rocket/rocket_types.h>
 #include <sys/socket.h>
 
 rocket_engine_t* rocket_engine_create(size_t queue_depth);

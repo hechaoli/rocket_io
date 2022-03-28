@@ -2,8 +2,8 @@
 
 #include <internal/dlist.h>
 #include <internal/pal.h>
-#include <rocket_fiber.h>
-#include <rocket_types.h>
+#include <rocket/rocket_fiber.h>
+#include <rocket/rocket_types.h>
 
 typedef enum {
   NONE = 0,
