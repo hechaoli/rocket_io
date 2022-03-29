@@ -42,7 +42,7 @@ any time in favor of another thread while a fiber may yield the execution
 voluntarily to another fiber when it's idle or blocked by an I/O operation.
 
 In Rocket I/O library, each task runs in a fiber. When blocked by I/O, it
-yields the execution. i
+yields the execution.
 
 Fibers are scheduled by an executor.
 
@@ -130,8 +130,8 @@ I/O completion.
 ### Prerequisite
 
 Rocket I/O is currently only supported on Linux on the following architectures:
-* X86_64
-* ARM64
+* x86_64
+* aarch64
 
 The only asynchronous I/O engine supported by Rocket I/O library for now is
 [`io_uring`](https://kernel.dk/io_uring.pdf). Therefore, to use it, the Linux
@@ -221,7 +221,8 @@ The Rocket I/O library currently has the following limitations, which will be
 solved by future work. 
 
 * The rocket executor is single-threaded. In other words, all fibers run on a
-  single thread. As a result, not all CPU cores are utilized.
+  single thread. As a result, not all CPU cores are utilized and the executor
+  is not thread-safe.
 * Each task submitted to the executor could have a return value. But currently
   there is no way to retrieve the value yet.
 * The only supported asynchronous I/O engine for now is `io_uring`. Other
@@ -231,7 +232,7 @@ solved by future work.
   added later.
 * Supported APIs for now:
   * File-related APIs
-    * `openat_await`
+    * `openat`
     * `read`
     * `write`
     * `close`
@@ -242,4 +243,4 @@ solved by future work.
 * Automation tests and detailed documentation are yet to be added.
 
 ## Benchmark
-TODO
+See [benchmark](src/benchmark/README.md).
