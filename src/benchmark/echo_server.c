@@ -81,6 +81,7 @@ static void* echo(void* context) {
       break;
     }
   }
+  close(client_fd);
   return NULL;
 }
 
@@ -90,13 +91,15 @@ static int run_echo_server(unsigned short port) {
     return -1;
   }
 
+  int ret = 0;
   while (true) {
     struct sockaddr_in clientaddr;
     socklen_t clientaddr_len = sizeof(clientaddr);
     int clientfd = accept(listenfd, (struct sockaddr *)&clientaddr, &clientaddr_len);
     if (clientfd < 0) {
-      fprintf(stderr, "Failed to accept connection\n");
-      return -1;
+      fprintf(stderr, "Failed to accept connection: %s\n", strerror(errno));
+      ret = -1;
+      break;
     }
     pthread_t client_thread;
     int err = pthread_create(&client_thread, /*attr=*/NULL, echo,
@@ -104,17 +107,20 @@ static int run_echo_server(unsigned short port) {
     if (err != 0) {
       fprintf(stderr, "Failed to create a thread for client %d: %s\n", clientfd,
               strerror(err));
-      return -1;
+      ret = -1;
+      break;
     }
     err = pthread_detach(client_thread);
     if (err != 0) {
       fprintf(stderr, "Failed to detach thread %lu: %s\n", client_thread,
               strerror(err));
-      return -1;
+      ret = -1;
+      break;
     }
   }
   // Should never reach here if everything goes well.
-  return 0;
+  close(listenfd);
+  return ret;
 }
 
 static void* async_echo(void* context) {
@@ -142,6 +148,7 @@ static void* async_echo(void* context) {
       break;
     }
   }
+  close(client_fd);
   return NULL;
 }
 
@@ -164,13 +171,14 @@ static void* run_async_echo_server(void* context_in) {
     int clientfd = accept_await(listenfd, (struct sockaddr *)&clientaddr,
                                 &clientaddr_len, /*flags=*/0);
     if (clientfd < 0) {
-      fprintf(stderr, "Failed to accept connection");
+      fprintf(stderr, "Failed to accept connection\n");
       return INT_TO_VOIDPTR(-1);
     }
     rocket_executor_submit_task(context->executor, async_echo,
                                 INT_TO_VOIDPTR(clientfd));
   }
   // Should never reach here if everything goes well.
+  close(listenfd);
   return INT_TO_VOIDPTR(0);
 }
 
