@@ -25,10 +25,10 @@
 
 #include <stdint.h>
 
-#include <internal/dlist.h>
-#include <internal/rocket_executor.h>
-#include <internal/rocket_fiber.h>
-#include <internal/switch.h>
+#include "dlist.h"
+#include "rocket_executor.h"
+#include "rocket_fiber.h"
+#include "switch.h"
 
 static __thread rocket_fiber_t *current_fiber;
 

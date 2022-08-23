@@ -29,9 +29,10 @@
 
 #include <rocket/rocket_engine.h>
 #include <rocket/rocket_fiber.h>
-#include <internal/rocket_executor.h>
-#include <internal/rocket_future.h>
-#include <internal/switch.h>
+
+#include "rocket_executor.h"
+#include "rocket_future.h"
+#include "switch.h"
 
 typedef struct {
   int dirfd;

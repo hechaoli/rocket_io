@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <internal/dlist.h>
-#include <internal/rocket_fiber.h>
+#include "dlist.h"
+#include "rocket_fiber.h"
 
 typedef struct rocket_future rocket_future_t;
 
