@@ -158,48 +158,42 @@ $ sudo apt install liburing liburing-dev
 
 ### Configure
 ```
-$ ./configure
+$ cmake -S . -B build
 ```
-
-Options:
-* `--prefix=<install_prefix>`: Installation prefix of `rocket_io` library.
-  [Default is `/usr/local`]
-* `--enable-debug`: Include debug symbols. [Default]
-* `--disable-debug`: Don't include debug symbols.
 
 ### Build
-To build a binary with examples of using `rocket_io` library:
-
+To build the project:
 ```
-$ make
-$ ./rocket_io_demo
+$ cmake --build build
 ```
 
-To build a file I/O benchmark binary for `rocket_io` library:
+### Executing
+To run the demo app:
 ```
-$ make benchmark_file_io
-$ ./benchmark_file_io
+$ ./build/src/rocket_io_demo
 ```
 
-To build an echo server using `rocket_io` library:
+To run a file I/O benchmark binary for `rocket_io` library:
 ```
-$ make echo_server
-$ ./echo_server
+$ ./build/src/benchmark_file_io
+```
+
+To run an echo server using `rocket_io` library:
+```
+$ ./build/src/echo_server
 ```
 
 ### Install
 To install `rocket_io` library:
 
 ```
-$ ./configure
-$ sudo make install
+$ sudo cmake --install build
 ```
 
 By default, the library is installed to `/usr/local/`. To change the install
 location, run:
 ```
-$ ./configure --prefix=<path_to_install>
-$ make install
+$ cmake --install build --prefix=<path_to_install>
 ```
 
 ### Usage
@@ -211,8 +205,9 @@ $ ./rocket_io_demo
 ```
 
 ### Uninstall
+To uninstall the previously installed files:
 ```
-$ sudo make uninstall
+$ sudo xargs rm < build/install_manifest.txt
 ```
 
 ## Limitations and Future Work
