@@ -70,8 +70,12 @@ static void big_stack_helper(int count) {
 }
 
 static void* big_stack(void* context) {
+  /* Fibers are given a max stack of 64KiB. This recursive call attempts to
+   * access as much of it as possible. Hold out one full page for whatever
+   * the compiler implicitly puts on the stack that we can't control.
+   */
   const size_t depth = 65536 / getpagesize() - 1;
-  big_stack_helper(depth);
+  big_stack_helper(depth - 1);
   return NULL;
 }
 
