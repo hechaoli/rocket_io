@@ -137,11 +137,11 @@ static void prepare_openat(struct io_uring_sqe* sqe, void* context) {
 
 int openat_await(int dirfd, const char* pathname, int oflag, ...) {
   mode_t pmode = 0;
-  if (__OPEN_NEEDS_MODE (oflag)) {
-    va_list arg;
-    va_start(arg, oflag);
-    pmode = va_arg(arg, mode_t);
-    va_end(arg);
+  if (__OPEN_NEEDS_MODE(oflag)) {
+    va_list args;
+    va_start(args, oflag);
+    pmode = va_arg(args, mode_t);
+    va_end(args);
   }
 
   openat_context_t context;
