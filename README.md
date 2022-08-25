@@ -170,17 +170,17 @@ $ cmake --build build
 ### Executing
 To run the demo app:
 ```
-$ ./build/src/rocket_io_demo
+$ ./build/tests/rocket_io_demo
 ```
 
 To run a file I/O benchmark binary for `rocket_io` library:
 ```
-$ ./build/src/benchmark_file_io
+$ ./build/tests/benchmark_file_io
 ```
 
 To run an echo server using `rocket_io` library:
 ```
-$ ./build/src/echo_server
+$ ./build/tests/echo_server
 ```
 
 ### Install
@@ -194,14 +194,6 @@ By default, the library is installed to `/usr/local/`. To change the install
 location, run:
 ```
 $ cmake --install build --prefix=<path_to_install>
-```
-
-### Usage
-A demo of using the library can be found in `src/main.c`. To build it after
-installing the library at the default location:
-```
-$ clang src/main.c -o rocket_io_demo -lrocket_io -lpthread -luring
-$ ./rocket_io_demo
 ```
 
 ### Uninstall
