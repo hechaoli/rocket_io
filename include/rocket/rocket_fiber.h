@@ -25,4 +25,12 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void rocket_fiber_yield();
+
+#ifdef __cplusplus
+}
+#endif
