@@ -24,6 +24,7 @@
  */
 
 #include <liburing.h>
+#include <stdarg.h>
 #include <stdio.h>
 
 #include <rocket/rocket_engine.h>
@@ -135,7 +136,15 @@ static void prepare_openat(struct io_uring_sqe* sqe, void* context) {
       openat_context->pmode);
 }
 
-int openat_await(int dirfd, const char* pathname, int oflag, mode_t pmode) {
+int openat_await(int dirfd, const char* pathname, int oflag, ...) {
+  mode_t pmode = 0;
+  if (__OPEN_NEEDS_MODE(oflag)) {
+    va_list args;
+    va_start(args, oflag);
+    pmode = va_arg(args, mode_t);
+    va_end(args);
+  }
+
   openat_context_t context;
   context.dirfd = dirfd;
   context.pathname = pathname;
