@@ -37,7 +37,7 @@
 #include "benchmark_common.h"
 
 typedef struct {
-  int (*openat)(int dirfd, const char *pathname, int oflag, mode_t mode);
+  int (*openat)(int dirfd, const char *pathname, int oflag, ...);
   ssize_t (*readat)(int fd, void *buf, size_t nbyts, off_t offset);
   ssize_t (*writeat)(int fd, const void *buf, size_t nbyts, off_t offset);
   int (*close)(int fd);
