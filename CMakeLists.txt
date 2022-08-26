@@ -30,5 +30,7 @@ project(
 )
 set(PUBLIC_HEADERS_DIR ${rocket_io_SOURCE_DIR}/include)
 
+enable_testing()
+
 add_subdirectory(src)
 add_subdirectory(tests)

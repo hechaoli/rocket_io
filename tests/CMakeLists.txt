@@ -24,6 +24,7 @@
 # A demo/test program to exercise the library
 add_executable(rocket_io_demo main.c)
 target_link_libraries(rocket_io_demo PRIVATE rocket_io pthread)
+add_test(NAME rocket_io_demo COMMAND rocket_io_demo)
 
 # Benchmark test program
 set(
@@ -33,6 +34,7 @@ set(
 )
 add_executable(benchmark_file_io ${BENCHMARK_SRC} ${PUBLIC_HEADERS})
 target_link_libraries(benchmark_file_io PRIVATE rocket_io pthread)
+add_test(NAME benchmark_file_io COMMAND benchmark_file_io -n 10 -c 10 -s 4096)
 
 # Echo server program
 set(

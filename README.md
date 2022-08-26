@@ -168,12 +168,12 @@ $ cmake --build build
 ```
 
 ### Executing
-To run the demo app:
+To run tests:
 ```
-$ ./build/tests/rocket_io_demo
+$ ctest --test-dir build
 ```
 
-To run a file I/O benchmark binary for `rocket_io` library:
+To manuall run the file I/O benchmark with custom options:
 ```
 $ ./build/tests/benchmark_file_io
 ```
