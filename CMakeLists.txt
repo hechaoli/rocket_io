@@ -23,6 +23,10 @@
 
 cmake_minimum_required(VERSION 3.15)
 
+include(FetchContent)
+
+enable_testing()
+
 project(
   rocket_io VERSION 0.1
   DESCRIPTION "Rocket I/O Library for async I/O"
