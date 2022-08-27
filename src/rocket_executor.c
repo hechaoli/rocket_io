@@ -25,11 +25,11 @@
 
 #include <stdio.h>
 
-#include <internal/rocket_engine.h>
-#include <internal/rocket_executor.h>
-#include <internal/rocket_fiber.h>
-#include <internal/rocket_future.h>
-#include <internal/switch.h>
+#include "rocket_engine.h"
+#include "rocket_executor.h"
+#include "rocket_fiber.h"
+#include "rocket_future.h"
+#include "switch.h"
 
 typedef struct {
   rocket_fiber_t* fiber;

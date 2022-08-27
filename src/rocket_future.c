@@ -23,9 +23,9 @@
  * SOFTWARE.
  */
 
-#include <internal/rocket_executor.h>
-#include <internal/rocket_fiber.h>
-#include <internal/rocket_future.h>
+#include "rocket_executor.h"
+#include "rocket_fiber.h"
+#include "rocket_future.h"
 
 // TODO: Add timeout
 int rocket_future_await(rocket_future_t* future) {
