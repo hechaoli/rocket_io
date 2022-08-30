@@ -21,10 +21,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# A demo/test program to exercise the library
-add_executable(rocket_io_demo main.c)
-target_link_libraries(rocket_io_demo PRIVATE rocket_io pthread)
-add_test(NAME rocket_io_demo COMMAND rocket_io_demo)
+# Fetch the googletest test framework.
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG        release-1.12.1
+)
+FetchContent_MakeAvailable(googletest)
+
+# Basic functionality test suite.
+set(
+  TEST_SRC
+  test_fibers.cpp
+  test_file_io.cpp
+)
+add_executable(rocket_io_tests ${TEST_SRC})
+target_link_libraries(rocket_io_tests PRIVATE rocket_io GTest::gtest_main)
+include(GoogleTest)
+gtest_discover_tests(rocket_io_tests)
 
 # Benchmark test program
 set(

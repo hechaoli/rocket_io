@@ -29,6 +29,10 @@
 #include <rocket/rocket_types.h>
 #include <sys/socket.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 rocket_engine_t* rocket_engine_create(size_t queue_depth);
 void rocket_engine_destroy(rocket_engine_t* engine);
 
@@ -41,3 +45,7 @@ int accept_await(int sockfd, struct sockaddr *addr, socklen_t *addrlen,
                  int flags);
 ssize_t send_await(int sockfd, const void *buf, size_t len, int flags);
 ssize_t recv_await(int sockfd, void *buf, size_t len, int flags);
+
+#ifdef __cplusplus
+}
+#endif

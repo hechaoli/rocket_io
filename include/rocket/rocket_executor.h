@@ -27,6 +27,10 @@
 
 #include <rocket/rocket_types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 rocket_executor_t* rocket_executor_create(rocket_engine_t* engine);
 void rocket_executor_submit_task(rocket_executor_t *executor,
                                  rocket_task_func_t func, void *context);
@@ -34,3 +38,7 @@ void rocket_executor_submit_task(rocket_executor_t *executor,
 // Returns only after all existing fibers finish running.
 void rocket_executor_execute(rocket_executor_t* executor);
 void rocket_executor_destroy(rocket_executor_t* executor);
+
+#ifdef __cplusplus
+}
+#endif
